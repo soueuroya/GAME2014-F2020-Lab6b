@@ -10,6 +10,8 @@ public class PlayerBehaviour : MonoBehaviour
     public float horizontalForce;
     public float verticalForce;
     public bool isGrounded;
+    public bool isJumping;
+    public Transform spawnPoint;
 
     private Rigidbody2D m_rigidBody2D;
     private SpriteRenderer m_spriteRenderer;
@@ -47,16 +49,22 @@ public class PlayerBehaviour : MonoBehaviour
                 m_spriteRenderer.flipX = true;
                 m_animator.SetInteger("AnimState", 1);
             }
-            else if (joystick.Vertical > joystickVerticalSensitivity)
+            else if(!isJumping)
+            {
+                m_animator.SetInteger("AnimState", 0);
+            }
+
+
+            if ((joystick.Vertical > joystickVerticalSensitivity) && (!isJumping))
             {
                 // jump
                 m_rigidBody2D.AddForce(Vector2.up * verticalForce * Time.deltaTime);
                 m_animator.SetInteger("AnimState", 2);
+                isJumping = true;
             }
             else
             {
-
-                m_animator.SetInteger("AnimState", 0);
+                isJumping = false;
             }
         }
 
@@ -70,5 +78,14 @@ public class PlayerBehaviour : MonoBehaviour
     private void OnCollisionExit2D(Collision2D other)
     {
         isGrounded = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // respawn
+        if (other.gameObject.CompareTag("DeathPlane"))
+        {
+            transform.position = spawnPoint.position;
+        }
     }
 }
