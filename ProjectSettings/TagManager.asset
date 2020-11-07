@@ -4,13 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-<<<<<<< Updated upstream
   - DeathPlane
-=======
-  - Fire
-  - Feet
   - Ground
->>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX

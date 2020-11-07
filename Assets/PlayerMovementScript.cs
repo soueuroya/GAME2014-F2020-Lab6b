@@ -8,6 +8,7 @@ public class PlayerMovementScript : MonoBehaviour
     public Animator animator;
     public SpriteRenderer spriteRenderer;
     public Joystick joystick;
+    public Vector2 startPosition;
     public float baseSpeed = 1500;
     public float calculatedSpeed = 1500;
     public float jumpSpeed = 700;
@@ -17,6 +18,8 @@ public class PlayerMovementScript : MonoBehaviour
     public bool isCrouching = false;
     public bool isGoingDown = false;
     public bool isJumping = false;
+    public bool isFalling;
+
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +28,7 @@ public class PlayerMovementScript : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         joystick = GameObject.Find("Joystick").GetComponent<Joystick>();
+        startPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -34,11 +38,17 @@ public class PlayerMovementScript : MonoBehaviour
         UpdateAnimations();
     }
 
+    public void Reset()
+    {
+        transform.position = startPosition;
+        rigidbody.velocity = Vector3.zero;
+    }
+
     public void ReadInput()
     {
         if (Input.GetAxisRaw("Horizontal") > 0 || joystick.Horizontal > 0.15f)
         {
-            rigidbody.velocity = new Vector2(calculatedSpeed * Time.deltaTime, rigidbody.velocity.y);
+            rigidbody.velocity = new Vector2(calculatedSpeed * Time.deltaTime * (joystick.Horizontal + Input.GetAxisRaw("Horizontal")), rigidbody.velocity.y);
             if (!isLookingRight)
             {
                 spriteRenderer.flipX = false;
@@ -47,7 +57,7 @@ public class PlayerMovementScript : MonoBehaviour
         }
         else if (Input.GetAxisRaw("Horizontal") < 0 || joystick.Horizontal < -0.15f)
         {
-            rigidbody.velocity = new Vector2(-calculatedSpeed * Time.deltaTime, rigidbody.velocity.y);
+            rigidbody.velocity = new Vector2(calculatedSpeed * Time.deltaTime * (joystick.Horizontal + Input.GetAxisRaw("Horizontal")), rigidbody.velocity.y);
             if (isLookingRight)
             {
                 isLookingRight = false;
@@ -61,8 +71,8 @@ public class PlayerMovementScript : MonoBehaviour
 
         if (isJumping)
         {
-            rigidbody.AddForce(Vector2.up * calculatedJumpSpeed / 7, ForceMode2D.Force);
-            if (!Input.GetKey(KeyCode.Space))
+            rigidbody.AddForce(Vector2.up * calculatedJumpSpeed / 3, ForceMode2D.Force);
+            if (!Input.GetKey(KeyCode.Space) && joystick.Vertical < 0.15f)
             {
                 isJumping = false;
             }
@@ -73,7 +83,7 @@ public class PlayerMovementScript : MonoBehaviour
             isJumping = false;
             if (!Input.GetKey(KeyCode.Space) && joystick.Vertical < 0.15f)
             {
-                rigidbody.AddForce(Vector2.down * calculatedJumpSpeed / 5, ForceMode2D.Force);
+                rigidbody.AddForce(Vector2.down * calculatedJumpSpeed, ForceMode2D.Force);
             }
         }
 
@@ -83,7 +93,7 @@ public class PlayerMovementScript : MonoBehaviour
             {
                 isJumping = true;
                 isGrounded = false;
-                if (rigidbody.velocity.y < 0.1f)
+                if (rigidbody.velocity.y < 0.1f && !isFalling)
                 {
                     rigidbody.AddForce(Vector2.up * calculatedJumpSpeed, ForceMode2D.Impulse);
                     animator.SetTrigger("Jump");
@@ -100,6 +110,12 @@ public class PlayerMovementScript : MonoBehaviour
         }
         
     }
+
+    public void FinishFall()
+    {
+        isFalling = false;
+    }
+
 
     public void GoingDown()
     {
@@ -122,6 +138,7 @@ public class PlayerMovementScript : MonoBehaviour
             if (isGoingDown)
             {
                 animator.SetTrigger("Fall");
+                isFalling = true;
                 isGoingDown = false;
             }
         }
@@ -133,6 +150,19 @@ public class PlayerMovementScript : MonoBehaviour
         {
             isGrounded = false;
             //animator.SetTrigger("Fall");
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ground"))
+        {
+            Grounded();
+        }
+        else
+        if (collision.CompareTag("DeathPlane"))
+        {
+            Reset();
         }
     }
 }

@@ -19,6 +19,10 @@ public class FeetScript : MonoBehaviour
         {
             pms.Grounded();
         }
+        else if (collision.gameObject.tag == "DeathPlane")
+        {
+
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)

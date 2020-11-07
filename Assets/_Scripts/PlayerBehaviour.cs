@@ -35,17 +35,15 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (isGrounded)
         {
-            if (joystick.Horizontal > joystickHorizontalSensitivity)
+            if (joystick.Horizontal > joystickHorizontalSensitivity || Input.GetAxisRaw("Horizontal") > joystickHorizontalSensitivity)
             {
-                // move right
-                m_rigidBody2D.AddForce(Vector2.right * horizontalForce * Time.deltaTime);
+                m_rigidBody2D.velocity = (Vector2.right * horizontalForce * Time.deltaTime);
                 m_spriteRenderer.flipX = false;
                 m_animator.SetInteger("AnimState", 1);
             }
-            else if (joystick.Horizontal < -joystickHorizontalSensitivity)
+            else if (joystick.Horizontal < -joystickHorizontalSensitivity || Input.GetAxisRaw("Horizontal") < -joystickHorizontalSensitivity)
             {
-                // move left
-                m_rigidBody2D.AddForce(Vector2.left * horizontalForce * Time.deltaTime);
+                m_rigidBody2D.velocity = (Vector2.left * horizontalForce * Time.deltaTime);
                 m_spriteRenderer.flipX = true;
                 m_animator.SetInteger("AnimState", 1);
             }
@@ -57,14 +55,9 @@ public class PlayerBehaviour : MonoBehaviour
 
             if ((joystick.Vertical > joystickVerticalSensitivity) && (!isJumping))
             {
-                // jump
-                m_rigidBody2D.AddForce(Vector2.up * verticalForce * Time.deltaTime);
+                m_rigidBody2D.AddForce(Vector2.up * verticalForce * Time.deltaTime, ForceMode2D.Impulse);
                 m_animator.SetInteger("AnimState", 2);
                 isJumping = true;
-            }
-            else
-            {
-                isJumping = false;
             }
         }
 
@@ -72,12 +65,12 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        isGrounded = true;
+        //isGrounded = true;
     }
 
     private void OnCollisionExit2D(Collision2D other)
     {
-        isGrounded = false;
+        //isGrounded = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -86,6 +79,17 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.CompareTag("DeathPlane"))
         {
             transform.position = spawnPoint.position;
+        }else if (other.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
         }
     }
 }
