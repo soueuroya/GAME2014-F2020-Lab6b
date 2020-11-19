@@ -6,6 +6,9 @@ TagManager:
   tags:
   - DeathPlane
   - Ground
+  - Enemy
+  - Projectile
+  - Sword
   layers:
   - Default
   - TransparentFX
