@@ -110,8 +110,7 @@ public class PlayerMovementScript : MonoBehaviour
         {
             if (isGrounded && !isJumping && !isAttacking)
             {
-                isAttacking = true;
-                animator.SetTrigger("Attack");
+                Attack();
             }
         }
         else if (isGrounded && rigidbody.velocity.x < 0.1f && rigidbody.velocity.x > -0.1f && (Input.GetKey(KeyCode.S) || joystick.Vertical < -0.15f))
@@ -123,6 +122,12 @@ public class PlayerMovementScript : MonoBehaviour
             isCrouching = false;
         }
         
+    }
+
+    public void Attack()
+    {
+        isAttacking = true;
+        animator.SetTrigger("Attack");
     }
 
     public void FinishAttack()

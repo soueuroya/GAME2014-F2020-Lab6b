@@ -40,6 +40,11 @@ public class EnemyScript : MonoBehaviour
         {
             hasTarget = true;
         }
+
+        if (collision.tag == "Sword")
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
