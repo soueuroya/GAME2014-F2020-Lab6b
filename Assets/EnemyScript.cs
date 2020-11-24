@@ -9,7 +9,7 @@ public class EnemyScript : MonoBehaviour
     public bool hasTarget = false;
     public bool isShooter;
     public int speed;
-
+    public AudioSource audio;
     void Start()
     {
         
@@ -43,7 +43,8 @@ public class EnemyScript : MonoBehaviour
 
         if (collision.tag == "Sword")
         {
-            Destroy(gameObject);
+            audio.Play();
+            Destroy(gameObject, 0.2f);
         }
     }
 

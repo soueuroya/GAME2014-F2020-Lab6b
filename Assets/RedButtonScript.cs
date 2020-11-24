@@ -9,7 +9,10 @@ public class RedButtonScript : MonoBehaviour
 
     public void Attack()
     {
-        pms.Attack();
+        if (pms.isGrounded && !pms.isJumping && !pms.isAttacking)
+        {
+            pms.Attack();
+        }
     }
 
 }

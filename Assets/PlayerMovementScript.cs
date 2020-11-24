@@ -1,11 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovementScript : MonoBehaviour
 {
+    public AudioClip hurt;
+    public AudioClip dead;
+    public AudioClip slash;
+    public AudioSource audio;
     public Rigidbody2D rigidbody;
     public Animator animator;
+    public GameObject healthbar;
+    public GameObject greenbar;
     public SpriteRenderer spriteRenderer;
     public Joystick joystick;
     public Vector2 startPosition;
@@ -20,6 +27,8 @@ public class PlayerMovementScript : MonoBehaviour
     public bool isJumping = false;
     public bool isAttacking = false;
     public bool isFalling;
+    public float maxhealth;
+    public float health;
     public int maxLifes = 3;
     public int lifes = 3;
     public List<GameObject> lifesIcon;
@@ -27,6 +36,7 @@ public class PlayerMovementScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        health = maxhealth;
         rigidbody = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
@@ -121,12 +131,13 @@ public class PlayerMovementScript : MonoBehaviour
         {
             isCrouching = false;
         }
-        
+
     }
 
     public void Attack()
     {
         isAttacking = true;
+        audio.PlayOneShot(slash);
         animator.SetTrigger("Attack");
     }
 
@@ -177,6 +188,19 @@ public class PlayerMovementScript : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            Grounded();
+        }
+        else
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            LoseLife();
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Ground"))
@@ -184,32 +208,49 @@ public class PlayerMovementScript : MonoBehaviour
             Grounded();
         }
         else
-        if (collision.CompareTag("DeathPlane"))
+        if (collision.gameObject.CompareTag("DeathPlane"))
         {
+            lifes--;
+            health = maxhealth;
+            UpdateLifes();
             Reset();
-        }
-        else
-        if (collision.CompareTag("Enemy"))
-        {
-            LoseLife();
+            audio.PlayOneShot(dead);
+            if (lifes <= 0)
+            {
+                GameOver();
+            }
+            UpdateHealth();
         }
     }
 
     public void LoseLife()
-    { 
-        if (lifes > 0)
+    {
+        health -= 10;
+        audio.PlayOneShot(hurt);
+        if (health <= 0)
         {
             lifes--;
+            health = maxhealth;
             UpdateLifes();
+            Reset();
+            audio.PlayOneShot(dead);
+            if (lifes <= 0)
+            {
+                GameOver();
+            }
         }
-        else
-        {
-            GameOver();
-        }
+        UpdateHealth();
     }
 
     public void GameOver()
-    { }
+    {
+        SceneManager.LoadScene("GameOver");
+    }
+
+    public void UpdateHealth()
+    {
+        greenbar.transform.localScale = new Vector3(health / maxhealth, 1, 1);
+    }
 
     public void UpdateLifes()
     {
@@ -224,6 +265,16 @@ public class PlayerMovementScript : MonoBehaviour
         }
     }
 
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            Grounded();
+            isFalling = false;
+            isJumping = false;
+        }
+    }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Ground"))
@@ -232,21 +283,11 @@ public class PlayerMovementScript : MonoBehaviour
             isFalling = false;
             isJumping = false;
         }
-        else
-        if (collision.CompareTag("DeathPlane"))
-        {
-            Reset();
-        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Ground"))
-        {
-            
-        }
-        else
-        if (collision.CompareTag("DeathPlane"))
         {
             
         }
