@@ -16,6 +16,7 @@ public class PlayerMovementScript : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Joystick joystick;
     public Vector2 startPosition;
+    public TrailRenderer tr;
     public float baseSpeed = 1500;
     public float calculatedSpeed = 1500;
     public float jumpSpeed = 700;
@@ -61,7 +62,7 @@ public class PlayerMovementScript : MonoBehaviour
     {
         if (!isAttacking)
         {
-            if (Input.GetAxisRaw("Horizontal") > 0 || joystick.Horizontal > 0.15f)
+            if (Input.GetAxisRaw("Horizontal") > 0 || joystick.Horizontal > 0.25f)
             {
                 rigidbody.velocity = new Vector2(calculatedSpeed * Time.deltaTime * (joystick.Horizontal + Input.GetAxisRaw("Horizontal")), rigidbody.velocity.y);
                 if (!isLookingRight)
@@ -70,7 +71,7 @@ public class PlayerMovementScript : MonoBehaviour
                     isLookingRight = true;
                 }
             }
-            else if (Input.GetAxisRaw("Horizontal") < 0 || joystick.Horizontal < -0.15f)
+            else if (Input.GetAxisRaw("Horizontal") < 0 || joystick.Horizontal < -0.25f)
             {
                 rigidbody.velocity = new Vector2(calculatedSpeed * Time.deltaTime * (joystick.Horizontal + Input.GetAxisRaw("Horizontal")), rigidbody.velocity.y);
                 if (isLookingRight)
@@ -88,7 +89,7 @@ public class PlayerMovementScript : MonoBehaviour
         if (isJumping)
         {
             rigidbody.AddForce(Vector2.up * calculatedJumpSpeed / 3, ForceMode2D.Force);
-            if (!Input.GetKey(KeyCode.Space) && joystick.Vertical < 0.15f)
+            if (!Input.GetKey(KeyCode.Space) && joystick.Vertical < 0.60f)
             {
                 isJumping = false;
             }
@@ -97,13 +98,13 @@ public class PlayerMovementScript : MonoBehaviour
         if (rigidbody.velocity.y < 0)
         {
             isJumping = false;
-            if (!Input.GetKey(KeyCode.Space) && joystick.Vertical < 0.15f)
+            if (!Input.GetKey(KeyCode.Space) && joystick.Vertical < 0.25f)
             {
                 rigidbody.AddForce(Vector2.down * calculatedJumpSpeed, ForceMode2D.Force);
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) || joystick.Vertical > 0.15f)
+        if (Input.GetKeyDown(KeyCode.Space) || joystick.Vertical > 0.25f)
         {
             if (isGrounded && !isJumping && !isAttacking)
             {
@@ -123,13 +124,22 @@ public class PlayerMovementScript : MonoBehaviour
                 Attack();
             }
         }
-        else if (isGrounded && rigidbody.velocity.x < 0.1f && rigidbody.velocity.x > -0.1f && (Input.GetKey(KeyCode.S) || joystick.Vertical < -0.15f))
+        else if (isGrounded && rigidbody.velocity.x < 0.1f && rigidbody.velocity.x > -0.1f && (Input.GetKey(KeyCode.S) || joystick.Vertical < -0.25f))
         {
             isCrouching = true;
         }
         else
         {
             isCrouching = false;
+        }
+
+        if(!isGrounded)
+        {
+            tr.enabled = false;
+        }
+        else
+        {
+            tr.enabled = true;
         }
 
     }

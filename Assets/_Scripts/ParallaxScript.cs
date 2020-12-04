@@ -11,7 +11,7 @@ public class ParallaxScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        target = GameObject.Find("Player").GetComponent<Rigidbody2D>();
+        //target = GameObject.Find("Main Camera").GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -19,11 +19,11 @@ public class ParallaxScript : MonoBehaviour
     {
         if (followY)
         {
-            transform.Translate(new Vector2(0, target.velocity.y / 5 * Time.deltaTime));
+            //transform.Translate(new Vector2(0, target.velocity.y / 5 * Time.deltaTime));
         }
         else
         {
-            transform.Translate(new Vector2(target.velocity.x / slower * Time.deltaTime, 0));
+            //transform.Translate(new Vector2(target.velocity.x / slower * Time.deltaTime, 0));
         }
     }
 }
