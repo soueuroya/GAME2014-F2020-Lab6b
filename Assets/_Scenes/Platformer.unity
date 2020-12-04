@@ -766,7 +766,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 0}
+  m_LookAt: {fileID: 2013978526}
   m_Follow: {fileID: 2013978526}
   m_Lens:
     FieldOfView: 60
@@ -2556,6 +2556,7 @@ GameObject:
   - component: {fileID: 549649963}
   - component: {fileID: 549649965}
   - component: {fileID: 549649964}
+  - component: {fileID: 549649966}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -2632,6 +2633,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &549649966
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549649962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 1, y: 1, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 10
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &553648434
 GameObject:
   m_ObjectHideFlags: 0
@@ -6295,6 +6313,8 @@ MonoBehaviour:
   joystick: {fileID: 0}
   startPosition: {x: 0, y: 0}
   tr: {fileID: 1877762689}
+  cvc: {fileID: 162693315}
+  cineperlin: {fileID: 0}
   baseSpeed: 300
   calculatedSpeed: 300
   jumpSpeed: 7
