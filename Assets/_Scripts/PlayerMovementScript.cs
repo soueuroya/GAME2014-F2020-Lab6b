@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cinemachine;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,6 +18,8 @@ public class PlayerMovementScript : MonoBehaviour
     public Joystick joystick;
     public Vector2 startPosition;
     public TrailRenderer tr;
+    public CinemachineVirtualCamera cvc;
+    public CinemachineBasicMultiChannelPerlin cineperlin;
     public float baseSpeed = 1500;
     public float calculatedSpeed = 1500;
     public float jumpSpeed = 700;
@@ -43,6 +46,7 @@ public class PlayerMovementScript : MonoBehaviour
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         joystick = GameObject.Find("Joystick").GetComponent<Joystick>();
         startPosition = transform.position;
+        cineperlin = cvc.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
 
     // Update is called once per frame
@@ -233,8 +237,15 @@ public class PlayerMovementScript : MonoBehaviour
         }
     }
 
+    public void StopShake()
+    {
+        cineperlin.m_AmplitudeGain = 0;
+    }
+
     public void LoseLife()
     {
+        cineperlin.m_AmplitudeGain = 3;
+        Invoke("StopShake", 0.2f);
         health -= 10;
         audio.PlayOneShot(hurt);
         if (health <= 0)
